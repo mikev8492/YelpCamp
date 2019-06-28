@@ -26,7 +26,13 @@ app.get("/campgrounds/new", function(req, res){
 });
 
 app.post("/campgrounds", function(req, res){
-  res.send("post route working");
+  //get data from form and add to campgrounds array
+  let name = req.body.name;
+  let image = req.body.image;
+  let newCampground = {name: name, image: image}
+  campgrounds.push(newCampground);
+  //redirect back to campgrounds Page
+  res.redirect("/campgrounds");
 });
 
 app.listen(3000, function(){
