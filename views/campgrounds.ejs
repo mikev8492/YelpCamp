@@ -1,12 +1,39 @@
 <% include partials/header %>
-<h1>This is the campgrounds page</h1>
 
-<% campgrounds.forEach(function(campground){ %>
-  <ul>
-    <li>
-      <h4><%= campground.name %></h4>
-      <img src="<%= campground.image %>" alt="campground image">
-    </li>
-  </ul>
-<% }); %>
+<div class="container">
+
+  <header class="jumbotron">
+    <!-- extra container to preserve spacing for mobile size -->
+    <div class="container">
+      <h1>YelpCamp</h1>
+      <p>View our handpicked campgrounds from all over the world</p>
+      <p>
+        <a href="/campgrounds/new" class="btn btn-primary btn-lg">Add new campground</a>
+      </p>
+    </div>
+  </header>
+
+   <div class="row">
+     <div class="col-lg-12">
+       <h3>Most Popular Campgrounds</h3>
+     </div>
+   </div>
+
+   <div class="row text-center" style="display: flex; flex-wrap: wrap">
+     <!-- campgrounds variable passed in from app.js app.get- /campgrounds -->
+     <% campgrounds.forEach(function(campground){ %>
+       <!-- 12 col total on page, so for col-3, each col takes up 3 = 4 columns on the page -->
+       <div class="col-md-3 col-sm-6">
+         <div class="thumbnail">
+           <img src="<%= campground.image %>" alt="campground image">
+           <div class="caption">
+              <h4><%= campground.name %></h4>
+           </div>
+         </div>
+       </div>
+     <% }); %>
+   </div>
+
+</div>
+
 <% include partials/footer %>
