@@ -3,20 +3,35 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-// mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-//Schema set up for V2.0
+//SCHEMA SETUP FOR V2.0
 var campgroundSchema = new mongoose.Schema({
   name: String,
-  image: String
+  image: String,
+  description: String
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
+//MANUALLY INPUTS SOME STARTER DATA
+// Campground.create(
+//   {
+//     name: "Granite Hill", image: "https://i2.wp.com/www.hachettebookgroup.com/wp-content/uploads/2019/01/WA_MoraCampground_NPS-publicdomain.jpg?resize=1080%2C1079&ssl=1", description: "Huge granit hill with dope bathrooms and shit."
+//
+// }, function(err, campground){
+//     if (err) {
+//       console.log(err)
+//     } else {
+//       console.log("Newly created campground: ");
+//       console.log(campground);
+//     }
+// });
 
-//array for V1.0
+
+//ARRAY FOR V1.0
 // var campgrounds = [
 //   {name: "Salmon Creek", image: "https://dailygazette.com/sites/default/files/styles/article_image/public/180702d.jpg?itok=6L_qDMLP"},
 //
@@ -35,43 +50,62 @@ app.get('/', function(req, res){
   res.render("landing");
 });
 
-//INDEX route
+//INDEX ROUTE
 app.get("/campgrounds", function(req ,res){
-  //renders from campgrounds array for V1.0
+  //RENDERS FROM CAMPGROUNDS ARRAY FROM V1.0
   // res.render("campgrounds", {campgrounds: campgrounds});
 
-  Get all campgrounds from the DB
+  // GET ALL CAMPGROUNDS FROM THE DB
   Campground.find({}, function(err, allCampgrounds){
     if (err) {
       console.log(err);
     } else {
-      res.render("campgrounds", {campgrounds: allCampgrounds});
+      res.render("index", {campgrounds: allCampgrounds});
     }
   });
 });
 
-//NEW route
+//NEW ROUTE
 app.get("/campgrounds/new", function(req, res){
   res.render("new", {});
 });
 
-//CREATE route
+//CREATE ROUTE
 app.post("/campgrounds", function(req, res){
-  //get data from form and add to campgrounds array
+  //GET DATA FROM FORM AND ADD TO CAMPGROUNDS VARIABLE (TO BE PUSHED TO ARRAY V1.0)
   let name = req.body.name;
   let image = req.body.image;
-  let newCampground = {name: name, image: image}
+  let desc = req.body.description;
+  let newCampground = {name: name, image: image, description: desc}
  // campgrounds.push(newCampground);
 
-  //create new campground and save to DB
+  //CREATE NEW CAMPGROUND AND SAVE TO DB
   Campground.create(newCampground, function(err, newlyCreated){
     if (err) {
       console.log(err);
     } else {
-      redirect back to campgrounds Page
+      // REDIRECT BACK TO CAMPGROUNDS PAGE
       res.redirect("/campgrounds");
+      console.log(newCampground);
     }
   });
+});
+
+//SHOW ROUTE - SHOWS MORE INFO ABOUT ONE CAMPGROUND
+app.get("/campgrounds/:id", function(req, res){
+  console.log("this is the 'show' page");
+  //FIND THE CAMPGROUND WITH PROVIDED ID
+  Campground.findById(req.params.id, function(err, foundCampground){
+    if (err) {
+      console.log(err);
+    } else {
+      //RENDER SHOW TEMPLATE WITH THAT CAMPGROUND
+      res.render("show",{campground: foundCampground});
+    }
+  });
+
+
+
 });
 
 app.listen(3000, function(){
