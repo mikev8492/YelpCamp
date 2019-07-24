@@ -103,9 +103,6 @@ app.get("/campgrounds/:id", function(req, res){
       res.render("show",{campground: foundCampground});
     }
   });
-
-
-
 });
 
 app.listen(3000, function(){
