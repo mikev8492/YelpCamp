@@ -1,20 +1,23 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
+const express = require("express"),
+      app = express(),
+      bodyParser = require("body-parser"),
+      mongoose = require("mongoose"),
+      Campground = require("./models/campground"),
+      seedDB = require("./seeds");
 
+seedDB();
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-//SCHEMA SETUP FOR V2.0
-var campgroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
+//SCHEMA SETUP FOR V2.0 (moved to ./model/campground.js for refactor)
+// var campgroundSchema = new mongoose.Schema({
+//   name: String,
+//   image: String,
+//   description: String
+// });
+//
+// var Campground = mongoose.model("Campground", campgroundSchema);
 
 //MANUALLY INPUTS SOME STARTER DATA
 // Campground.create(
