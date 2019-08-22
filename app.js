@@ -1,3 +1,4 @@
+// consider adding dotenv to hide any API keys or DB credentials
 const express = require("express"),
       app = express(),
       bodyParser = require("body-parser"),
@@ -5,6 +6,7 @@ const express = require("express"),
       //authorization dependencies
       passport = require("passport"),
       LocalStrategy = require("passport-local"),
+      methodOverride = require("method-override"),
       // MODELS
       Campground = require("./models/campground"),
       Comment = require("./models/comment"),
@@ -15,11 +17,13 @@ const commentRoutes = require("./routes/comments"),
       campgroundRoutes = require("./routes/campgrounds"),
       indexRoutes = require("./routes/index");
 
-
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
+// MOVE THIS TO .gitignore file?
+mongoose.connect("mongodb+srv://app:1234@yelpcamp-tvaxq.mongodb.net/yelp_camp?retryWrites=true&w=majority", {useNewUrlParser: true});
+// mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+app.use(methodOverride("_method"));
 //RUN THIS TO REFRESH AND SEED DB WITH DATA:
 // seedDB();
 

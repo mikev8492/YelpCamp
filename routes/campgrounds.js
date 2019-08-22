@@ -26,14 +26,14 @@ router.get("/new", isLoggedIn, function(req, res){
 //CREATE ROUTE
 router.post("/", isLoggedIn, function(req, res){
   //GET DATA FROM FORM AND ADD TO CAMPGROUNDS VARIABLE (TO BE PUSHED TO ARRAY V1.0)
-  let name = req.body.name;
-  let image = req.body.image;
-  let desc = req.body.description;
-  let author = {
+  var name = req.body.name;
+  var image = req.body.image;
+  var desc = req.body.description;
+  var author = {
     id: req.user._id,
     username: req.user.username
   }
-  let newCampground = {name: name, image: image, description: desc, author: author}
+  var newCampground = {name: name, image: image, description: desc, author: author}
  // campgrounds.push(newCampground);
 
   //CREATE NEW CAMPGROUND AND SAVE TO DB
@@ -61,6 +61,19 @@ router.get("/:id", function(req, res){
     }
   });
 });
+
+// EDIT ROUTE
+router.get("/:id/edit", function(req, res){
+  Campground.findById(req.params.id, function(err, foundCampground){
+    if (err) {
+      res.redirect("/campgrounds");
+    } else {
+      res.render("campgrounds/edit", {campground: foundCampground});
+    }
+  });
+});
+
+//UPDATE ROUTE
 
 // MIDDLEWARE
 function isLoggedIn(req, res, next){
