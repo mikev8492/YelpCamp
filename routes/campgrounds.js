@@ -1,7 +1,7 @@
 const express = require("express"),
       router = express.Router(),
-      Campground = require("../models/campground");
-
+      Campground = require("../models/campground"),
+      middleware = require("../middleware"); //index.js will automatically use index by default
 //INDEX ROUTE
 router.get("/", function(req ,res){
   //RENDERS FROM CAMPGROUNDS ARRAY FROM V1.0
@@ -18,12 +18,12 @@ router.get("/", function(req ,res){
 });
 
 //NEW ROUTE
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
   res.render("campgrounds/new", {});
 });
 
 //CREATE ROUTE
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
   //GET DATA FROM FORM AND ADD TO CAMPGROUNDS VARIABLE (TO BE PUSHED TO ARRAY V1.0)
   var name = req.body.name;
   var image = req.body.image;
@@ -62,32 +62,19 @@ router.get("/:id", function(req, res){
 });
 
 // EDIT ROUTE
-router.get("/:id/edit", function(req, res){
-  // is user logged in ?
-  if (req.isAuthenticated()) {
-    Campground.findById(req.params.id, function(err, foundCampground){
-      if (err) {
-        res.redirect("/campgrounds");
-      } else {
-        // does user own the campground?
-        // console.log([foundCampground.author.id, req.user._id]); --> one is a mongoDB object and one is a string
-        if (foundCampground.author.id.equals(req.user._id)) {
-          res.render("campgrounds/edit", {campground: foundCampground});
-        } else {
-          res.send("you don't have permission to do that.");
-        }
-      }
-    });
-  } else {
-    res.send("You need to be logged in to do that...");
-  }
-
-    // if not, redirect
-
+router.get("/:id/edit", middleware.checkCampgroundOwner, function(req, res){
+  Campground.findById(req.params.id, function(err, foundCampground){
+    // technically don't need an error handler here because findById is already run in the checkCampgroundOwner function
+    if (err) {
+      res.redirect("/campgrounds");
+    } else {
+        res.render("campgrounds/edit", {campground: foundCampground});
+    }
+  });
 });
 
 //UPDATE ROUTE
-router.put("/:id", function (req, res) {
+router.put("/:id", middleware.checkCampgroundOwner, function (req, res) {
   // find and update the correct campground
   Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
     if (err) {
@@ -101,7 +88,7 @@ router.put("/:id", function (req, res) {
 });
 
 // DESTROY ROUTE
-router.delete("/:id", function(req, res){
+router.delete("/:id", middleware.checkCampgroundOwner, function(req, res){
   Campground.findByIdAndRemove(req.params.id, function(err){
     if (err) {
       console.log(err);
@@ -111,14 +98,5 @@ router.delete("/:id", function(req, res){
     }
   });
 });
-
-// MIDDLEWARE
-function isLoggedIn(req, res, next){
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-};
-
 
 module.exports = router;
