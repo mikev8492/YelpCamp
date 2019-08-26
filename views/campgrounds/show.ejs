@@ -20,6 +20,11 @@
           <p>
             <em>Submitted by <%= campground.author.username %></em>
           </p>
+          <a class="btn btn-xs btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+          <!-- for Destroy route, need to make a form with _method=DELETE -->
+          <form id="deleteForm" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-xs btn-danger">Delete</button>
+          </form>
         </div>
       </div>
       <div class="well">

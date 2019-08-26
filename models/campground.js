@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+mongoose.set("useFindAndModify", false);
+
 var campgroundSchema = new mongoose.Schema({
   name: String,
   image: String,
