@@ -51,10 +51,10 @@ router.post("/", middleware.isLoggedIn, function(req, res){
 router.get("/:id", function(req, res){
   //FIND THE CAMPGROUND WITH PROVIDED ID
   Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground){
-    if (err) {
+    if (err || !foundCampground) {
+      req.flash('error', 'Sorry, that campground does not exist!');
       console.log(err);
     } else {
-      //console.log(foundCampground);
       //RENDER SHOW TEMPLATE WITH THAT CAMPGROUND
       res.render("campgrounds/show",{campground: foundCampground});
     }
@@ -68,6 +68,10 @@ router.get("/:id/edit", middleware.checkCampgroundOwner, function(req, res){
     if (err) {
       res.redirect("/campgrounds");
     } else {
+
+        if (!foundCampground) {
+            return res.status(400).send("Item not found.")
+        }
         res.render("campgrounds/edit", {campground: foundCampground});
     }
   });
