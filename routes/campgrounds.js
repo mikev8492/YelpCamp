@@ -2,6 +2,7 @@ const express = require("express"),
       router = express.Router(),
       Campground = require("../models/campground"),
       middleware = require("../middleware"); //index.js will automatically use index by default
+
 //INDEX ROUTE
 router.get("/", function(req ,res){
   //RENDERS FROM CAMPGROUNDS ARRAY FROM V1.0
@@ -12,27 +13,28 @@ router.get("/", function(req ,res){
     if (err) {
       console.log(err);
     } else {
-      res.render("campgrounds/index", {campgrounds: allCampgrounds});
+      res.render("campgrounds/index", {campgrounds: allCampgrounds, page: "campgrounds"});
     }
   });
 });
 
 //NEW ROUTE
 router.get("/new", middleware.isLoggedIn, function(req, res){
-  res.render("campgrounds/new", {});
+  res.render("campgrounds/new");
 });
 
 //CREATE ROUTE
 router.post("/", middleware.isLoggedIn, function(req, res){
   //GET DATA FROM FORM AND ADD TO CAMPGROUNDS VARIABLE (TO BE PUSHED TO ARRAY V1.0)
   var name = req.body.name;
+  var cost = req.body.cost;
   var image = req.body.image;
   var desc = req.body.description;
   var author = {
     id: req.user._id,
     username: req.user.username
   }
-  var newCampground = {name: name, image: image, description: desc, author: author}
+  var newCampground = {name: name, cost: cost, image: image, description: desc, author: author}
  // campgrounds.push(newCampground);
 
   //CREATE NEW CAMPGROUND AND SAVE TO DB
